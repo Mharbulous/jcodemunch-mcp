@@ -90,6 +90,15 @@ LANGUAGE_EXTENSIONS = {
     ".ejs": "ejs",
     ".verse": "verse",
     ".lua": "lua",
+    ".erl": "erlang",
+    ".hrl": "erlang",
+    ".f90": "fortran",
+    ".f95": "fortran",
+    ".f03": "fortran",
+    ".f08": "fortran",
+    ".f": "fortran",
+    ".for": "fortran",
+    ".fpp": "fortran",
 }
 
 
@@ -801,6 +810,48 @@ VERSE_SPEC = LanguageSpec(
 )
 
 
+# Fortran specification
+# NOTE: Fortran's tree-sitter grammar uses a translation_unit root with
+# function/subroutine/module/program top-level nodes.  function_statement
+# and subroutine_statement expose named 'name' and 'parameters' fields.
+# Module-contained procedures live inside internal_procedures nodes.
+# All extraction logic is in _parse_fortran_symbols() in extractor.py.
+FORTRAN_SPEC = LanguageSpec(
+    ts_language="fortran",
+    symbol_node_types={},
+    name_fields={},
+    param_fields={},
+    return_type_fields={},
+    docstring_strategy="preceding_comment",
+    decorator_node_type=None,
+    container_node_types=[],
+    constant_patterns=[],
+    type_patterns=[],
+)
+
+
+# Erlang specification
+# NOTE: Erlang's tree-sitter grammar represents all top-level constructs as
+# distinct node types (fun_decl, type_alias, opaque, record_decl, pp_define).
+# Multi-clause functions produce one fun_decl per clause; deduplication by
+# (name, arity) is handled in _parse_erlang_symbols() in extractor.py.
+# Named fields are not used (the grammar doesn't expose them uniformly), so
+# all fields below are intentionally empty — extraction logic lives in
+# _parse_erlang_symbols().
+ERLANG_SPEC = LanguageSpec(
+    ts_language="erlang",
+    symbol_node_types={},
+    name_fields={},
+    param_fields={},
+    return_type_fields={},
+    docstring_strategy="preceding_comment",
+    decorator_node_type=None,
+    container_node_types=[],
+    constant_patterns=[],
+    type_patterns=[],
+)
+
+
 # Lua specification
 # NOTE: Lua uses a single `function_declaration` node type for all named
 # functions — local, module.method (dot_index_expression), and OOP methods
@@ -849,6 +900,8 @@ LANGUAGE_REGISTRY = {
     "ejs": EJS_SPEC,
     "verse": VERSE_SPEC,
     "lua": LUA_SPEC,
+    "erlang": ERLANG_SPEC,
+    "fortran": FORTRAN_SPEC,
 }
 
 logger = logging.getLogger(__name__)
