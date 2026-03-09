@@ -2,7 +2,7 @@
 
 All notable changes to jcodemunch-mcp are documented here.
 
-## [Unreleased]
+## [1.2.6] - 2026-03-09
 
 ### Added
 - **SQL language support** — `.sql` files are now indexed via `tree-sitter-sql` (derekstride grammar)
